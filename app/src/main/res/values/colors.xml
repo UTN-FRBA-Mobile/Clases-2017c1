@@ -3,4 +3,7 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="drawerBackgroundColor">#323e4d</color>
+    <color name="drawerBackgroundColorPressed">#414c5b</color>
+    <color name="drawerTextColor">#adb2b8</color>
 </resources>

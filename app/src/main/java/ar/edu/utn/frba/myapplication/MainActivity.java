@@ -1,11 +1,18 @@
 package ar.edu.utn.frba.myapplication;
 
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -13,15 +20,20 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.Toast;
+
+import ar.edu.utn.frba.myapplication.api.responses.Identifiable;
+import ar.edu.utn.frba.myapplication.api.responses.event.Event;
+import ar.edu.utn.frba.myapplication.service.RTMService;
+import ar.edu.utn.frba.myapplication.session.Session;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, MainFragment.OnFragmentInteractionListener {
+        implements MainFragment.OnFragmentInteractionListener, DrawerAdapter.Listener {
 
     boolean tieneDosFragments;
-    private boolean userIsLoggedIn;
+    private RTMService service;
+    private DrawerLayout drawer;
+    private DrawerAdapter drawerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,14 +51,16 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        drawerAdapter = new DrawerAdapter(this, this);
+        RecyclerView drawerRecycler = (RecyclerView) findViewById(R.id.nav_view);
+        drawerRecycler.setAdapter(drawerAdapter);
+        drawerRecycler.setLayoutManager(new LinearLayoutManager(this));
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragmentContainer, new MainFragment(), "Fragment")
@@ -92,31 +106,23 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
+    protected void onStart() {
+        super.onStart();
+        Intent intent = new Intent(this, RTMService.class);
+        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+        registerReceiver(sessionChangedReceiver, new IntentFilter(RTMService.SessionChangedIntentAction));
+        registerReceiver(eventReceiver, new IntentFilter(RTMService.NewEventIntentAction));
+    }
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        } else if (id == R.id.nav_logout) {
-            onLogout();
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (service != null) {
+            unbindService(serviceConnection);
         }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
+        unregisterReceiver(sessionChangedReceiver);
+        unregisterReceiver(eventReceiver);
     }
 
     @Override
@@ -146,7 +152,7 @@ public class MainActivity extends AppCompatActivity
     // Override this method to do what you want when the menu is recreated
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if(userIsLoggedIn){
+        if(isUserLoggedIn()){
             menu.findItem(R.id.action_logout).setVisible(true);
             menu.findItem(R.id.action_login).setVisible(false);
         } else {
@@ -158,33 +164,55 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void onLogin() {
-        userIsLoggedIn = true;
+        service.connect();
         updateDrawer();
     }
 
     private void onLogout() {
-        userIsLoggedIn = false;
+        service.disconnect();
         updateDrawer();
     }
 
     private void updateDrawer() {
-        NavigationView navView= (NavigationView) findViewById(R.id.nav_view);
-        View header = navView.getHeaderView(0);
-        Menu navMenu = navView.getMenu();
-        LinearLayout sideNavLayout = (LinearLayout)header.findViewById(R.id.sideNavLayout);
-
-        if(userIsLoggedIn){
-            ((ImageView)findViewById(R.id.imageView)).setImageResource(R.drawable.ic_action_name);
-            ((TextView)findViewById(R.id.nav_main_text)).setText(R.string.logged_in_drawer_message);
-            ((TextView)findViewById(R.id.nav_sec_text)).setText(R.string.logged_in_drawer_mail);
-            navMenu.findItem(R.id.nav_logout).setVisible(true);
-            sideNavLayout.setBackgroundResource(R.drawable.side_nav_bar_loggedin);
-        } else {
-            ((ImageView)findViewById(R.id.imageView)).setImageResource(R.drawable.ic_profile);
-            ((TextView)findViewById(R.id.nav_main_text)).setText(R.string.default_drawer_message);
-            ((TextView)findViewById(R.id.nav_sec_text)).setText(R.string.default_drawer_mail);
-            navMenu.findItem(R.id.nav_logout).setVisible(false);
-            sideNavLayout.setBackgroundResource(R.drawable.side_nav_bar);
-        }
+        boolean connecting = service != null && service.isConnecting();
+        Session session = service != null ? service.getSession() : null;
+        drawerAdapter.update(session, connecting);
     }
+
+    boolean isUserLoggedIn() {
+        return service != null && service.getSession() != null;
+    }
+
+    @Override
+    public void selectChat(Identifiable chat) {
+        drawer.closeDrawer(GravityCompat.START);
+    }
+
+    ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder serviceBinder) {
+            RTMService.Binder binder = (RTMService.Binder) serviceBinder;
+            service = binder.getService();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            service = null;
+        }
+    };
+
+    private BroadcastReceiver sessionChangedReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateDrawer();
+        }
+    };
+
+    private BroadcastReceiver eventReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Event event = (Event) intent.getSerializableExtra(RTMService.EventExtraKey);
+            Toast.makeText(MainActivity.this, event.toString(), Toast.LENGTH_SHORT).show();
+        }
+    };
 }

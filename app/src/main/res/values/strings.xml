@@ -14,8 +14,6 @@
     <string name="action_share" />
     <string name="action_login">Log in</string>
     <string name="action_logout">Log out</string>
-    <string name="logged_in_drawer_message">Hola mundo!</string>
-    <string name="logged_in_drawer_mail">soyunmail@utn.com</string>
     <string name="default_drawer_message">Hi there</string>
     <string name="default_drawer_mail" />
     <string name="alt_text_profile_pic">Profile Pic</string>
@@ -26,4 +24,6 @@
     <string name="slideshow">Slideshow</string>
     <string name="gallery">Gallery</string>
     <string name="camera">Cámara</string>
+    <string name="connecting">Conectando...</string>
+    <string name="channels">Channels</string>
 </resources>
