@@ -21,10 +21,12 @@ import java.util.concurrent.Executors;
 import ar.edu.utn.frba.myapplication.api.Callback;
 import ar.edu.utn.frba.myapplication.api.ResponseParser;
 import ar.edu.utn.frba.myapplication.api.SlackApi;
+import ar.edu.utn.frba.myapplication.api.responses.AuthRevokeResponse;
 import ar.edu.utn.frba.myapplication.api.responses.RtmStartResponse;
 import ar.edu.utn.frba.myapplication.api.responses.event.Event;
 import ar.edu.utn.frba.myapplication.session.Session;
 import ar.edu.utn.frba.myapplication.session.SessionImpl;
+import ar.edu.utn.frba.myapplication.storage.Preferences;
 import okio.Buffer;
 import okio.BufferedSource;
 
@@ -38,10 +40,10 @@ public class RTMService extends Service {
     public static final String EventExtraKey = "EventExtra";
 
     private static final String TAG = RTMService.class.getName();
-    private static final String apiToken = "SU TOKEN AQUÍ";
 
     private final IBinder binder = new Binder();
     private ExecutorService executor = Executors.newSingleThreadExecutor();
+    private Preferences preferences = Preferences.get(this);
     private Handler handler = new Handler();
     private boolean shouldConnect = false;
     private boolean obtainingUrl = false;
@@ -54,15 +56,18 @@ public class RTMService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        shouldConnect = true;
-        connectIfRequired();
+        connect();
         return binder;
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
-        disconnect();
-        executor.shutdown();
+        disconnect(new Runnable() {
+            @Override
+            public void run() {
+                executor.shutdown();
+            }
+        });
         return super.onUnbind(intent);
     }
 
@@ -72,7 +77,7 @@ public class RTMService extends Service {
     }
 
     private void connectIfRequired() {
-        if (!shouldConnect || obtainingUrl || webSocket != null) {
+        if (!shouldConnect || obtainingUrl || webSocket != null || preferences.getAccessToken() == null) {
             return;
         }
         if (websocketUrl == null) {
@@ -138,7 +143,7 @@ public class RTMService extends Service {
 
     private void obtainWebSocketURI() {
         obtainingUrl = true;
-        Runnable request = SlackApi.rtmStart(apiToken, new Callback<RtmStartResponse>() {
+        Runnable request = SlackApi.rtmStart(preferences.getAccessToken(), new Callback<RtmStartResponse>() {
             @Override
             public void onSuccess(RtmStartResponse response) {
                 obtainingUrl = false;
@@ -167,7 +172,7 @@ public class RTMService extends Service {
         executor.execute(request);
     }
 
-    public void disconnect() {
+    private void disconnect(final Runnable next) {
         shouldConnect = false;
         session = null;
         if (webSocket != null && connected) {
@@ -179,10 +184,30 @@ public class RTMService extends Service {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                    next.run();
                 }
             });
         }
+        else {
+            executor.execute(next);
+        }
         broadcastSessionChanged();
+    }
+
+    public void logout() {
+        String currentAccessToken = preferences.getAccessToken();
+        preferences.setAccessToken(null);
+        session = null;
+        broadcastSessionChanged();
+        disconnect(SlackApi.authRevoke(currentAccessToken, new Callback<AuthRevokeResponse>() {
+            @Override
+            public void onSuccess(AuthRevokeResponse response) {
+            }
+
+            @Override
+            public void onError(Exception e) {
+            }
+        }));
     }
 
     private void broadcastSessionChanged() {

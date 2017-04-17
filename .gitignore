@@ -48,3 +48,6 @@ captures/
 
 # Keystore files
 *.jks
+
+slack.properties
+

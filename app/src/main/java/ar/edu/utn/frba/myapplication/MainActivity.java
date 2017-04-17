@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import ar.edu.utn.frba.myapplication.api.responses.Identifiable;
 import ar.edu.utn.frba.myapplication.api.responses.event.Event;
+import ar.edu.utn.frba.myapplication.oauth.OAuthActivity;
 import ar.edu.utn.frba.myapplication.service.RTMService;
 import ar.edu.utn.frba.myapplication.session.Session;
 
@@ -66,6 +67,7 @@ public class MainActivity extends AppCompatActivity
                 .replace(R.id.fragmentContainer, new MainFragment(), "Fragment")
                 .commit();
         tieneDosFragments = findViewById(R.id.contentFrame) != null;
+        updateDrawer();
     }
 
     @Override
@@ -164,12 +166,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void onLogin() {
-        service.connect();
-        updateDrawer();
+        Intent intent = new Intent(this, OAuthActivity.class);
+        startActivity(intent);
     }
 
     private void onLogout() {
-        service.disconnect();
+        service.logout();
         updateDrawer();
     }
 
