@@ -21,5 +21,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/otro"/>
+    <Button android:id="@+id/termsAndConditions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/termsAndConditions"/>
 
 </LinearLayout>

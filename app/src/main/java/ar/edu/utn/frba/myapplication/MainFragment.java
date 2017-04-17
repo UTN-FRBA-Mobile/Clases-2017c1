@@ -54,6 +54,12 @@ public class MainFragment extends Fragment {
                 mListener.navegar(editText.getText().toString());
             }
         });
+        view.findViewById(R.id.termsAndConditions).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mListener.navegar(TermsAndConditionsFragment.newInstance());
+            }
+        });
     }
 
     @Override
@@ -87,5 +93,6 @@ public class MainFragment extends Fragment {
 
         void share(String texto);
         void navegar(String texto);
+        void navegar(Fragment fragment);
     }
 }

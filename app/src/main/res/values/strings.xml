@@ -26,4 +26,10 @@
     <string name="camera">Cámara</string>
     <string name="connecting">Conectando...</string>
     <string name="channels">Channels</string>
+
+    <string name="termsAndConditions">Términos y Condiciones</string>
+    <string name="acceptMenu">Aceptar</string>
+    <string name="dontAcceptMenu">No aceptar</string>
+    <string name="accept">Aceptaste los términos y condiciones. Grosso.</string>
+    <string name="dontAccept">Aceptá los terminos y condiciones, dale.</string>
 </resources>

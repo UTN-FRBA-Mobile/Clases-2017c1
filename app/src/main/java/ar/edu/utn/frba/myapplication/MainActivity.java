@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -29,7 +30,7 @@ import ar.edu.utn.frba.myapplication.service.RTMService;
 import ar.edu.utn.frba.myapplication.session.Session;
 
 public class MainActivity extends AppCompatActivity
-        implements MainFragment.OnFragmentInteractionListener, DrawerAdapter.Listener {
+        implements MainFragment.OnFragmentInteractionListener, DrawerAdapter.Listener, TermsAndConditionsFragment.OnFragmentInteractionListener {
 
     boolean tieneDosFragments;
     private RTMService service;
@@ -138,15 +139,21 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void navegar(String texto) {
+        navegar(OtroFragment.newInstance(texto));
+    }
+
+    @Override
+    public void navegar(Fragment fragment) {
         if (tieneDosFragments) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.contentFrame, OtroFragment.newInstance(texto), "Fragment")
+                    .addToBackStack(null)
+                    .replace(R.id.contentFrame, fragment, "Fragment")
                     .commit();
         }
         else {
             getSupportFragmentManager().beginTransaction()
                     .addToBackStack(null)
-                    .replace(R.id.fragmentContainer, OtroFragment.newInstance(texto), "Fragment")
+                    .replace(R.id.fragmentContainer, fragment, "Fragment")
                     .commit();
         }
     }
@@ -217,4 +224,9 @@ public class MainActivity extends AppCompatActivity
             Toast.makeText(MainActivity.this, event.toString(), Toast.LENGTH_SHORT).show();
         }
     };
+
+    @Override
+    public void goBack() {
+        getSupportFragmentManager().popBackStack();
+    }
 }
