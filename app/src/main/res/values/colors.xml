@@ -6,4 +6,9 @@
     <color name="drawerBackgroundColor">#323e4d</color>
     <color name="drawerBackgroundColorPressed">#414c5b</color>
     <color name="drawerTextColor">#adb2b8</color>
+    <color name="barColor">#aaccee</color>
+    <color name="barButtonColor">@android:color/white</color>
+    <color name="barButtonColorPressed">@color/drawerBackgroundColorPressed</color>
+    <color name="barButtonColorDisabled">#80ffffff</color>
+    <color name="pendingMessage">#80000000</color>
 </resources>

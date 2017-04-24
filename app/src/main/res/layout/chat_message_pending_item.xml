@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="top">
+    <ImageView android:id="@+id/profileImageView"
+        android:layout_width="@dimen/profileImageChatSize"
+        android:layout_height="@dimen/profileImageChatSize"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_margin="4dp" />
+    <ProgressBar android:id="@+id/progressBar"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_margin="4dp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        />
+    <TextView android:id="@+id/userTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/profileImageView"
+        android:layout_alignParentTop="true"
+        android:textColor="@color/pendingMessage"
+        tools:text="username"
+        android:textStyle="bold"/>
+    <TextView android:id="@+id/timeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="2dp"
+        android:layout_toRightOf="@id/userTextView"
+        android:layout_alignBaseline="@id/userTextView"
+        android:layout_toLeftOf="@id/progressBar"
+        tools:text="time" />
+    <TextView android:id="@+id/messageTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/pendingMessage"
+        android:layout_below="@id/userTextView"
+        android:layout_toRightOf="@id/profileImageView"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@id/progressBar"
+        tools:text="message" />
+</RelativeLayout>

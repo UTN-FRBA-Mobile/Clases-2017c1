@@ -16,6 +16,9 @@ public class EventAdapter implements JsonDeserializer<Event> {
     @Override
     public Event deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         JsonObject jsonObject =  json.getAsJsonObject();
+        if (jsonObject.get("reply_to") != null) {
+            return context.deserialize(json, ResponseEvent.class);
+        }
         JsonElement typeObj = jsonObject.get("type");
         String type = typeObj != null ? typeObj.getAsString() : null;
         Class<? extends Event> clazz = classForType(type != null ? type : "unknown");
@@ -26,6 +29,8 @@ public class EventAdapter implements JsonDeserializer<Event> {
         switch (type) {
             case "message":
                 return MessageEvent.class;
+            case "user_typing":
+                return UserTypingEvent.class;
             default:
                 return UnknownEvent.class;
         }

@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.util.SparseArray;
 
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.internal.ws.WebSocket;
@@ -22,8 +23,12 @@ import ar.edu.utn.frba.myapplication.api.Callback;
 import ar.edu.utn.frba.myapplication.api.ResponseParser;
 import ar.edu.utn.frba.myapplication.api.SlackApi;
 import ar.edu.utn.frba.myapplication.api.responses.AuthRevokeResponse;
+import ar.edu.utn.frba.myapplication.api.responses.Chat;
+import ar.edu.utn.frba.myapplication.api.responses.ChatHistoryResponse;
 import ar.edu.utn.frba.myapplication.api.responses.RtmStartResponse;
 import ar.edu.utn.frba.myapplication.api.responses.event.Event;
+import ar.edu.utn.frba.myapplication.api.responses.event.MessageEvent;
+import ar.edu.utn.frba.myapplication.api.responses.event.ResponseEvent;
 import ar.edu.utn.frba.myapplication.session.Session;
 import ar.edu.utn.frba.myapplication.session.SessionImpl;
 import ar.edu.utn.frba.myapplication.storage.Preferences;
@@ -52,6 +57,7 @@ public class RTMService extends Service {
     private boolean connected = false;
     private int lastId = 1;
     private SessionImpl session;
+    private SparseArray<Event> pendingEvents = new SparseArray<>();
 
     @Nullable
     @Override
@@ -106,9 +112,12 @@ public class RTMService extends Service {
                             Log.d(TAG, "Mensaje recibido.");
                             final String message = payload.readUtf8();
                             Event event = ResponseParser.instance.parseEvent(message);
-                            Intent intent = new Intent(NewEventIntentAction);
-                            intent.putExtra(EventExtraKey, event);
-                            sendBroadcast(intent);
+                            if (event instanceof ResponseEvent) {
+                                event = updatePendingEvent((ResponseEvent) event);
+                            }
+                            if (event != null) {
+                                broadcastEvent(event);
+                            }
                             payload.close();
                         }
 
@@ -141,6 +150,26 @@ public class RTMService extends Service {
         });
     }
 
+    private Event updatePendingEvent(ResponseEvent event) {
+        try {
+            int id = Integer.parseInt(event.getReplyTo());
+            Event realEvent = pendingEvents.get(id);
+            if (realEvent != null && event.isOk()) {
+                realEvent.setTs(event.getTs());
+            }
+            return realEvent;
+        }
+        catch (Exception e) {
+            return null;
+        }
+    }
+
+    private void broadcastEvent(Event event) {
+        Intent intent = new Intent(NewEventIntentAction);
+        intent.putExtra(EventExtraKey, event);
+        sendBroadcast(intent);
+    }
+
     private void obtainWebSocketURI() {
         obtainingUrl = true;
         Runnable request = SlackApi.rtmStart(preferences.getAccessToken(), new Callback<RtmStartResponse>() {
@@ -153,6 +182,7 @@ public class RTMService extends Service {
                 session.setTeam(response.getTeam());
                 session.setChannels(response.getChannels());
                 session.setUsers(response.getUsers());
+                session.setIMs(response.getIMs());
                 broadcastSessionChanged();
                 Log.d(TAG, "ws url: " + websocketUrl);
                 connectIfRequired();
@@ -241,11 +271,17 @@ public class RTMService extends Service {
             @Override
             public void run() {
                 try {
+                    int id = nextId();
+                    String userId = session.getMe().getId();
+                    String type = "message";
                     JSONObject json = new JSONObject();
-                    json.put("type", "message");
-                    json.put("id", nextId());
+                    json.put("type", type);
+                    json.put("id", id);
                     json.put("channel", channelId);
                     json.put("text", text);
+                    MessageEvent message = new MessageEvent(id, channelId, userId, type, text);
+                    pendingEvents.put(id, message);
+                    broadcastEvent(message);
                     Buffer payload = new Buffer();
                     payload.writeString(json.toString(), Charset.defaultCharset());
                     webSocket.sendMessage(WebSocket.PayloadType.TEXT, payload);
@@ -254,6 +290,12 @@ public class RTMService extends Service {
                 }
             }
         });
+    }
+
+    public Runnable retrieveChatHistory(Chat chat, Callback<ChatHistoryResponse> callback) {
+        Runnable runnable = SlackApi.chatHistory(preferences.getAccessToken(), chat, null, null, true, 100, false, callback);
+        executor.execute(runnable);
+        return runnable;
     }
 
     int nextId() {

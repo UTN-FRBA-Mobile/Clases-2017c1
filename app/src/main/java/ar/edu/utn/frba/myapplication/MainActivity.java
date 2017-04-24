@@ -8,12 +8,9 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -23,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import ar.edu.utn.frba.myapplication.api.responses.Chat;
 import ar.edu.utn.frba.myapplication.api.responses.Identifiable;
 import ar.edu.utn.frba.myapplication.api.responses.event.Event;
 import ar.edu.utn.frba.myapplication.oauth.OAuthActivity;
@@ -30,12 +28,13 @@ import ar.edu.utn.frba.myapplication.service.RTMService;
 import ar.edu.utn.frba.myapplication.session.Session;
 
 public class MainActivity extends AppCompatActivity
-        implements MainFragment.OnFragmentInteractionListener, DrawerAdapter.Listener, TermsAndConditionsFragment.OnFragmentInteractionListener {
+        implements MainFragment.OnFragmentInteractionListener, DrawerAdapter.Listener, TermsAndConditionsFragment.OnFragmentInteractionListener, ChatFragment.OnFragmentInteractionListener {
 
     boolean tieneDosFragments;
     private RTMService service;
     private DrawerLayout drawer;
     private DrawerAdapter drawerAdapter;
+    private ChatFragment chatFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,15 +42,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -64,9 +54,11 @@ public class MainActivity extends AppCompatActivity
         drawerRecycler.setAdapter(drawerAdapter);
         drawerRecycler.setLayoutManager(new LinearLayoutManager(this));
 
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragmentContainer, new MainFragment(), "Fragment")
-                .commit();
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragmentContainer, new MainFragment(), "Fragment")
+                    .commit();
+        }
         tieneDosFragments = findViewById(R.id.contentFrame) != null;
         updateDrawer();
     }
@@ -122,6 +114,7 @@ public class MainActivity extends AppCompatActivity
     protected void onStop() {
         super.onStop();
         if (service != null) {
+            service = null;
             unbindService(serviceConnection);
         }
         unregisterReceiver(sessionChangedReceiver);
@@ -156,6 +149,16 @@ public class MainActivity extends AppCompatActivity
                     .replace(R.id.fragmentContainer, fragment, "Fragment")
                     .commit();
         }
+    }
+
+    @Override
+    public RTMService getService() {
+        return service;
+    }
+
+    @Override
+    public void sendMessage(Chat chat, String message) {
+        service.sendMessage(chat.getId(), message);
     }
 
     // Override this method to do what you want when the menu is recreated
@@ -194,7 +197,29 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void selectChat(Identifiable chat) {
+        gotoChat(chat);
         drawer.closeDrawer(GravityCompat.START);
+    }
+
+    void gotoChat(Identifiable destination) {
+        Session session = service != null ? service.getSession() : null;
+        Chat chat = session != null ? session.findChat(destination) : null;
+        if (chat == null) {
+            return;
+        }
+        if (chatFragment == null) {
+            chatFragment = ChatFragment.newInstance(chat);
+        }
+        else {
+            chatFragment.changeChat(chat);
+        }
+        if (!chatFragment.isAdded()) {
+            getSupportFragmentManager().beginTransaction()
+                    .addToBackStack(null)
+                    .setCustomAnimations(R.anim.push_show, 0, 0, R.anim.pop_hide)
+                    .replace(R.id.fragmentContainer, chatFragment, "ChatFragment")
+                    .commit();
+        }
     }
 
     ServiceConnection serviceConnection = new ServiceConnection() {

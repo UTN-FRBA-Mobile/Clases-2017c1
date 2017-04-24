@@ -12,6 +12,7 @@ public class RtmStartResponse extends BaseResponse {
     private Team team;
     private List<Channel> channels;
     private List<User> users;
+    private List<IM> ims;
     private String url;
 
     public SelfUser getSelf() {
@@ -28,6 +29,10 @@ public class RtmStartResponse extends BaseResponse {
 
     public List<User> getUsers() {
         return users;
+    }
+
+    public List<IM> getIMs() {
+        return ims;
     }
 
     public String getUrl() {

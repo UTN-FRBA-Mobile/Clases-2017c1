@@ -26,6 +26,7 @@
     <string name="camera">Cámara</string>
     <string name="connecting">Conectando...</string>
     <string name="channels">Channels</string>
+    <string name="user_typing">%s está tipeando...</string>
 
     <string name="termsAndConditions">Términos y Condiciones</string>
     <string name="acceptMenu">Aceptar</string>

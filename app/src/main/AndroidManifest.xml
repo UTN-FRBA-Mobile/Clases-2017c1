@@ -24,7 +24,7 @@
 
         <service android:name=".service.RTMService" />
 
-        <activity android:name=".oauth.OAuthActivity"></activity>
+        <activity android:name=".oauth.OAuthActivity" android:theme="@style/Theme.AppCompat.Light.Dialog.Alert"></activity>
     </application>
 
 </manifest>

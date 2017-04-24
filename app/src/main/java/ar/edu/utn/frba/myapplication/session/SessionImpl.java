@@ -3,6 +3,9 @@ package ar.edu.utn.frba.myapplication.session;
 import java.util.List;
 
 import ar.edu.utn.frba.myapplication.api.responses.Channel;
+import ar.edu.utn.frba.myapplication.api.responses.Chat;
+import ar.edu.utn.frba.myapplication.api.responses.IM;
+import ar.edu.utn.frba.myapplication.api.responses.Identifiable;
 import ar.edu.utn.frba.myapplication.api.responses.SelfUser;
 import ar.edu.utn.frba.myapplication.api.responses.Team;
 import ar.edu.utn.frba.myapplication.api.responses.User;
@@ -18,6 +21,7 @@ public class SessionImpl implements Session {
     private Team team;
     private List<Channel> channels;
     private List<User> users;
+    private List<IM> ims;
 
     public SelfUser getSelf() {
         return self;
@@ -38,6 +42,32 @@ public class SessionImpl implements Session {
             }
         }
         return me;
+    }
+
+    @Override
+    public Chat findChat(Identifiable destination) {
+        if (destination instanceof Chat) {
+            return (Chat) destination;
+        }
+        if (destination instanceof User) {
+            User user = (User) destination;
+            for (IM im : ims) {
+                if (im.getUser().equals(user.getId())) {
+                    return im;
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public User findUser(String userId) {
+        for (User user : users) {
+            if (user.getId().equals(userId)) {
+                return user;
+            }
+        }
+        return null;
     }
 
     public Team getTeam() {
@@ -63,5 +93,14 @@ public class SessionImpl implements Session {
     public void setUsers(List<User> users) {
         this.users = users;
         this.me = null;
+    }
+
+    @Override
+    public List<IM> getIMs() {
+        return ims;
+    }
+
+    public void setIMs(List<IM> ims) {
+        this.ims = ims;
     }
 }

@@ -3,16 +3,17 @@ package ar.edu.utn.frba.myapplication.api;
 import android.net.Uri;
 import android.util.Log;
 
-import org.json.JSONObject;
-
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 
-import ar.edu.utn.frba.myapplication.api.UrlRequest;
 import ar.edu.utn.frba.myapplication.api.responses.AuthRevokeResponse;
 import ar.edu.utn.frba.myapplication.api.responses.BaseResponse;
+import ar.edu.utn.frba.myapplication.api.responses.Channel;
+import ar.edu.utn.frba.myapplication.api.responses.Chat;
+import ar.edu.utn.frba.myapplication.api.responses.ChatHistoryResponse;
+import ar.edu.utn.frba.myapplication.api.responses.IM;
 import ar.edu.utn.frba.myapplication.api.responses.OAuthAccessResponse;
 import ar.edu.utn.frba.myapplication.api.responses.RtmStartResponse;
 
@@ -45,6 +46,25 @@ public class SlackApi {
         return jsonRequest(url, callback, RtmStartResponse.class);
     }
 
+    public static Runnable chatHistory(String token, Chat chat, String latest, String oldest, boolean inclusive, int count, boolean unreads, Callback<ChatHistoryResponse> callback) {
+        String chatType = "";
+        if (chat instanceof Channel) {
+            chatType = "channels";
+        }
+        else if (chat instanceof IM) {
+            chatType = "im";
+        }
+        StringBuilder urlBuilder = new StringBuilder(chatType).append(".history?token=").append(token).append("&channel=").append(chat.getId()).append("&inclusive=").append(urlEncode(inclusive)).append("&count=").append(urlEncode(count)).append("&unreads=").append(urlEncode(unreads));
+        if (latest != null) {
+            urlBuilder.append("&latest=").append(latest);
+        }
+        if (oldest != null) {
+            urlBuilder.append("&oldest=").append(oldest);
+        }
+        URL url = parseURL(urlBuilder.toString());
+        return jsonRequest(url, callback, ChatHistoryResponse.class);
+    }
+
     public static Runnable authRevoke(String token, Callback<AuthRevokeResponse> callback) {
         URL url = parseURL("auth.revoke?token=" + token);
         return jsonRequest(url, callback, AuthRevokeResponse.class);
@@ -56,6 +76,14 @@ public class SlackApi {
         } catch (UnsupportedEncodingException e) {
             return null;
         }
+    }
+
+    private static String urlEncode(boolean value) {
+        return value ? "true" : "false";
+    }
+
+    private static String urlEncode(int value) {
+        return String.valueOf(value);
     }
 
     private static URL parseURL(String urlString) {
