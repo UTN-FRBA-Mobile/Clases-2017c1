@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.PersistableBundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -17,19 +18,27 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 import ar.edu.utn.frba.myapplication.R;
+import ar.edu.utn.frba.myapplication.api.UrlRequest;
+import ar.edu.utn.frba.myapplication.storage.ImageLoader;
 
 public class SelectPictureActivity extends AppCompatActivity {
 
@@ -39,6 +48,8 @@ public class SelectPictureActivity extends AppCompatActivity {
     private static final int REQUEST_READ = 4313;
 
     private ImageView selectedImageView;
+    private ProgressBar progressBar;
+    private Handler handler = new Handler();
 
     String currentPhotoPath;
 
@@ -62,6 +73,29 @@ public class SelectPictureActivity extends AppCompatActivity {
             }
         });
         currentPhotoPath = getIntent().getStringExtra(SELECTED_PICTURE);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        final EditText urlEditText = (EditText) findViewById(R.id.urlEditText);
+        final View urlButton = findViewById(R.id.urlButton);
+        urlEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                urlButton.setEnabled(s.length() > 0);
+            }
+        });
+        urlButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                downloadFromUrl(urlEditText.getText().toString());
+            }
+        });
         loadImage();
     }
 
@@ -122,6 +156,56 @@ public class SelectPictureActivity extends AppCompatActivity {
         startActivityForResult(gallery, REQUEST_PICK_IMAGE);
     }
 
+    private void downloadFromUrl(String urlString) {
+        URL url = null;
+        try {
+            url = new URL(urlString);
+        } catch (MalformedURLException e) {
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+            return;
+        }
+        progressBar.setVisibility(View.VISIBLE);
+        ImageLoader.instance.execute(UrlRequest.makeRequest(url, new UrlRequest.Listener() {
+            @Override
+            public void onReceivedBody(int responseCode, byte body[]) {
+                final Bitmap bitmap = BitmapFactory.decodeByteArray(body, 0, body.length);
+                if (bitmap != null) {
+                    try {
+                        File file = createImageFile();
+                        FileOutputStream output = new FileOutputStream(file);
+                        output.write(body);
+                        output.close();
+                        Intent resultData = new Intent();
+                        resultData.putExtra(SELECTED_PICTURE, currentPhotoPath);
+                        setResult(RESULT_OK, resultData);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (bitmap != null) {
+                            selectedImageView.setImageBitmap(bitmap);
+                        }
+                        progressBar.setVisibility(View.INVISIBLE);
+                    }
+                });
+            }
+
+            @Override
+            public void onError(final Exception e) {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(SelectPictureActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                        progressBar.setVisibility(View.INVISIBLE);
+                    }
+                });
+            }
+        }));
+    }
+
     @Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
         super.onSaveInstanceState(outState, outPersistentState);
@@ -141,6 +225,7 @@ public class SelectPictureActivity extends AppCompatActivity {
                 len = input.read(buffer);
             };
             output.close();
+            input.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

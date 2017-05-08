@@ -14,7 +14,7 @@ public class UrlRequest implements Runnable {
 
     public interface Listener {
 
-        void onReceivedBody(int responseCode, String body);
+        void onReceivedBody(int responseCode, byte body[]);
         void onError(Exception e);
     }
 
@@ -59,7 +59,7 @@ public class UrlRequest implements Runnable {
             while ((bytesRead = stream.read(buffer)) > 0) {
                 responseBody.write(buffer, 0, bytesRead);
             }
-            listener.onReceivedBody(responseCode, responseBody.toString());
+            listener.onReceivedBody(responseCode, responseBody.toByteArray());
         }
         catch (Exception e) {
             listener.onError(e);

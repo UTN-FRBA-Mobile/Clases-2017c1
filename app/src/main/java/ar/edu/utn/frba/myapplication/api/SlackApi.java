@@ -106,10 +106,11 @@ public class SlackApi {
     private static <T> Runnable jsonRequest(URL url, final Callback<T> callback, final ParseJson<T> parseJson) {
         return UrlRequest.makeRequest(url, new UrlRequest.Listener() {
             @Override
-            public void onReceivedBody(int responseCode, String body) {
+            public void onReceivedBody(int responseCode, byte body[]) {
+                String bodyString = new String(body);
                 if (responseCode == 200) {
                     try {
-                        T response = parseJson.parse(body);
+                        T response = parseJson.parse(bodyString);
                         callback.onSuccess(response);
                     } catch (Exception e) {
                         callback.onError(e);
@@ -118,7 +119,7 @@ public class SlackApi {
                 else {
                     String message = null;
                     try {
-                        BaseResponse response = ResponseParser.instance.parse(body, BaseResponse.class);
+                        BaseResponse response = ResponseParser.instance.parse(bodyString, BaseResponse.class);
                         message = response.getError();
                     }
                     catch (Exception e) {
