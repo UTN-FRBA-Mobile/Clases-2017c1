@@ -152,6 +152,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public void hello() {
+        Toast.makeText(this, getString(R.string.hello_toast), Toast.LENGTH_LONG).show();
+    }
+
+    @Override
     public RTMService getService() {
         return service;
     }

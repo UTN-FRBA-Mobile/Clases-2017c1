@@ -36,4 +36,6 @@
     <string name="photo_gallery">Galería</string>
 
     <string name="readStorageRequired">Requiere acceso de lectura al almacenamiento externo.</string>
+    <string name="hello">Hola</string>
+    <string name="hello_toast">Hola como andas?</string>
 </resources>
