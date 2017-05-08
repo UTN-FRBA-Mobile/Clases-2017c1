@@ -11,6 +11,7 @@ public class Preferences {
 
     private static final String PREF_NAME = Preferences.class.getName();
     private static final String ACCESS_TOKEN = "AccessToken";
+    private static final String MAIN_PICTURE = "MainPicture";
     private final Context context;
     private SharedPreferences sp;
 
@@ -35,5 +36,13 @@ public class Preferences {
 
     public void setAccessToken(String accessToken) {
         getSp().edit().putString(ACCESS_TOKEN, accessToken).apply();
+    }
+
+    public String getMainPicture() {
+        return getSp().getString(MAIN_PICTURE, null);
+    }
+
+    public void setMainPicture(String mainPicture) {
+        getSp().edit().putString(MAIN_PICTURE, mainPicture).apply();
     }
 }

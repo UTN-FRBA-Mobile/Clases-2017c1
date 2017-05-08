@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name">Mobile 2017 1C</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -33,4 +33,7 @@
     <string name="dontAcceptMenu">No aceptar</string>
     <string name="accept">Aceptaste los términos y condiciones. Grosso.</string>
     <string name="dontAccept">Aceptá los terminos y condiciones, dale.</string>
+    <string name="photo_gallery">Galería</string>
+
+    <string name="readStorageRequired">Requiere acceso de lectura al almacenamiento externo.</string>
 </resources>

@@ -1,6 +1,10 @@
 package ar.edu.utn.frba.myapplication;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -8,6 +12,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
+
+import ar.edu.utn.frba.myapplication.picture.SelectPictureActivity;
+import ar.edu.utn.frba.myapplication.storage.Preferences;
 
 
 /**
@@ -18,17 +26,18 @@ import android.widget.EditText;
  */
 public class MainFragment extends Fragment {
 
+    private static final int PICTURE_REQUEST_CODE = 35743;
+    private static final String PICTURE = "picture";
+
     private OnFragmentInteractionListener mListener;
 
+    private ImageView pictureView;
     private EditText editText;
+
+    private Preferences preferences;
 
     public MainFragment() {
         // Required empty public constructor
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -41,6 +50,15 @@ public class MainFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        pictureView = (ImageView)view.findViewById(R.id.pictureView);
+        view.findViewById(R.id.changePictureButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), SelectPictureActivity.class);
+                intent.putExtra(SelectPictureActivity.SELECTED_PICTURE, preferences.getMainPicture());
+                startActivityForResult(intent, PICTURE_REQUEST_CODE);
+            }
+        });
         editText = (EditText)view.findViewById(R.id.editText);
         view.findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,8 +81,15 @@ public class MainFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        loadImage();
+    }
+
+    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        preferences = Preferences.get(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
@@ -77,6 +102,28 @@ public class MainFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    private void loadImage() {
+        String path = preferences.getMainPicture();
+        Bitmap bitmap = BitmapFactory.decodeFile(path, null);
+        pictureView.setImageBitmap(bitmap);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case PICTURE_REQUEST_CODE:
+                if (resultCode == Activity.RESULT_OK && data != null) {
+                    String filePath = data.getStringExtra(SelectPictureActivity.SELECTED_PICTURE);
+                    if (filePath != null) {
+                        preferences.setMainPicture(filePath);
+                        loadImage();
+                    }
+                }
+                break;
+        }
     }
 
     /**

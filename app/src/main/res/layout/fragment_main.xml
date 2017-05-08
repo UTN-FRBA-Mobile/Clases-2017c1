@@ -5,7 +5,23 @@
     android:orientation="vertical"
     tools:context="ar.edu.utn.frba.myapplication.MainFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <ImageView
+            android:id="@+id/pictureView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop" />
+        <ImageView android:id="@+id/changePictureButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:padding="16dp"
+            android:src="@drawable/ic_menu_camera" />
+    </FrameLayout>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -25,5 +41,4 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/termsAndConditions"/>
-
 </LinearLayout>
