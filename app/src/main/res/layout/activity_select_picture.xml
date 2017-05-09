@@ -28,8 +28,8 @@
         app:layout_constraintHorizontal_chainStyle="spread"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="4dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="8dp" />
+        app:layout_constraintBottom_toBottomOf="@+id/galleryButton"
+        android:layout_marginBottom="0dp" />
 
     <Button
         android:id="@+id/galleryButton"
@@ -37,10 +37,48 @@
         android:layout_height="wrap_content"
         android:text="@string/photo_gallery"
         app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/cameraButton"
+        app:layout_constraintBottom_toTopOf="@+id/urlButton"
+        android:layout_marginRight="8dp"
+        android:layout_marginLeft="4dp"
+        tools:layout_editor_absoluteY="399dp" />
+
+    <Button
+        android:id="@+id/urlButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/from_url"
+        android:layout_marginRight="7dp"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginBottom="8dp"
-        app:layout_constraintLeft_toRightOf="@+id/cameraButton"
+        android:layout_marginTop="8dp"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <EditText
+        android:id="@+id/urlEditText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginLeft="4dp" />
+        android:inputType="textUri"
+        android:text=""
+        app:layout_constraintBaseline_toBaselineOf="@+id/urlButton"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/urlButton" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@id/selectedImageView"
+        app:layout_constraintLeft_toLeftOf="@id/selectedImageView"
+        app:layout_constraintRight_toRightOf="@id/selectedImageView"
+        app:layout_constraintTop_toTopOf="@id/selectedImageView"
+        tools:layout_editor_absoluteX="168dp"
+        tools:layout_editor_absoluteY="177dp" />
 
 </android.support.constraint.ConstraintLayout>

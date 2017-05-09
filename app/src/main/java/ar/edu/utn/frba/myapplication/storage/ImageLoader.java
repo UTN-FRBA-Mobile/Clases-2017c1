@@ -83,4 +83,8 @@ public class ImageLoader {
             }
         });
     }
+
+    public void execute(Runnable command) {
+        executor.execute(command);
+    }
 }

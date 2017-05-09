@@ -78,6 +78,12 @@ public class MainFragment extends Fragment {
                 mListener.navegar(TermsAndConditionsFragment.newInstance());
             }
         });
+        view.findViewById(R.id.helloButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mListener.hello();
+            }
+        });
     }
 
     @Override
@@ -141,5 +147,6 @@ public class MainFragment extends Fragment {
         void share(String texto);
         void navegar(String texto);
         void navegar(Fragment fragment);
+        void hello();
     }
 }
