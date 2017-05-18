@@ -37,6 +37,7 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.squareup.okhttp:okhttp:2.2.0'
     compile 'com.google.code.gson:gson:2.7'
+    compile 'com.google.firebase:firebase-messaging:10.2.6'
     testCompile 'junit:junit:4.12'
 
     androidTestCompile 'com.android.support:recyclerview-v7:25.3.1'
