@@ -11,4 +11,6 @@
     <color name="barButtonColorPressed">@color/drawerBackgroundColorPressed</color>
     <color name="barButtonColorDisabled">#80ffffff</color>
     <color name="pendingMessage">#80000000</color>
+
+    <color name="background">#2265a0</color>
 </resources>

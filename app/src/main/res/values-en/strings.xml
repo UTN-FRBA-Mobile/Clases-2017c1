@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Mobile 2017 1C</string>
+
+    <string name="share">Share</string>
+    <string name="otro">Other</string>
+    <string name="camera">Camera</string>
+    <string name="connecting">Conecting...</string>
+    <string name="channels">Channels</string>
+    <string name="user_typing">%s is typing...</string>
+
+    <string name="termsAndConditions">Terms and conditions</string>
+    <string name="acceptMenu">Accept</string>
+    <string name="dontAcceptMenu">Dont accept</string>
+    <string name="accept">You agreed terms and conditions. Sweet.</string>
+    <string name="dontAccept">Accept terms and conditions, come on.</string>
+    <string name="photo_gallery">Gallery</string>
+
+    <string name="readStorageRequired">Apps needs to read storage</string>
+    <string name="hello">Hello</string>
+    <string name="hello_toast">Hello how are you?</string>
+    <string name="from_url">From Url</string>
+
+</resources>
