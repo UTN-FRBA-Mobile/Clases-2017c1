@@ -39,4 +39,5 @@
     <string name="hello">Hola</string>
     <string name="hello_toast">Hola como andas?</string>
     <string name="from_url">Desde URL</string>
+    <string name="Notifications">Notificaciones</string>
 </resources>

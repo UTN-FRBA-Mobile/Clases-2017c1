@@ -45,4 +45,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/hello"/>
+    <Button android:id="@+id/notiifcationsButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/Notifications"/>
 </LinearLayout>
