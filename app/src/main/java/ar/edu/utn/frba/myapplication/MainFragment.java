@@ -81,7 +81,13 @@ public class MainFragment extends Fragment {
         view.findViewById(R.id.helloButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mListener.hello();
+                mListener.showToast(getString(R.string.hello_toast));
+            }
+        });
+        view.findViewById(R.id.notiifcationsButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mListener.navegar(NotificationsFragment.newInstance());
             }
         });
 
@@ -156,6 +162,6 @@ public class MainFragment extends Fragment {
         void share(String texto);
         void navegar(String texto);
         void navegar(Fragment fragment);
-        void hello();
+        void showToast(String value);
     }
 }
