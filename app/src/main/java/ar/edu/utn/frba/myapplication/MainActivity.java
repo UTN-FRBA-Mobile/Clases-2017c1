@@ -20,8 +20,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.google.firebase.FirebaseApp;
-
 import ar.edu.utn.frba.myapplication.api.responses.Chat;
 import ar.edu.utn.frba.myapplication.api.responses.Identifiable;
 import ar.edu.utn.frba.myapplication.api.responses.event.Event;
@@ -33,7 +31,7 @@ public class MainActivity extends AppCompatActivity
         implements MainFragment.OnFragmentInteractionListener, DrawerAdapter.Listener, TermsAndConditionsFragment.OnFragmentInteractionListener, ChatFragment.OnFragmentInteractionListener {
 
     boolean tieneDosFragments;
-    private RTMService service;
+    private RTMService rtmService;
     private DrawerLayout drawer;
     private DrawerAdapter drawerAdapter;
     private ChatFragment chatFragment;
@@ -115,8 +113,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStop() {
         super.onStop();
-        if (service != null) {
-            service = null;
+        if (rtmService != null) {
+            rtmService = null;
             unbindService(serviceConnection);
         }
         unregisterReceiver(sessionChangedReceiver);
@@ -158,14 +156,13 @@ public class MainActivity extends AppCompatActivity
         Toast.makeText(this, value, Toast.LENGTH_LONG).show();
     }
 
-    @Override
-    public RTMService getService() {
-        return service;
+    public RTMService getRtmService() {
+        return rtmService;
     }
 
     @Override
     public void sendMessage(Chat chat, String message) {
-        service.sendMessage(chat.getId(), message);
+        rtmService.sendMessage(chat.getId(), message);
     }
 
     // Override this method to do what you want when the menu is recreated
@@ -188,18 +185,18 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void onLogout() {
-        service.logout();
+        rtmService.logout();
         updateDrawer();
     }
 
     private void updateDrawer() {
-        boolean connecting = service != null && service.isConnecting();
-        Session session = service != null ? service.getSession() : null;
+        boolean connecting = rtmService != null && rtmService.isConnecting();
+        Session session = rtmService != null ? rtmService.getSession() : null;
         drawerAdapter.update(session, connecting);
     }
 
     boolean isUserLoggedIn() {
-        return service != null && service.getSession() != null;
+        return rtmService != null && rtmService.getSession() != null;
     }
 
     @Override
@@ -209,7 +206,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     void gotoChat(Identifiable destination) {
-        Session session = service != null ? service.getSession() : null;
+        Session session = rtmService != null ? rtmService.getSession() : null;
         Chat chat = session != null ? session.findChat(destination) : null;
         if (chat == null) {
             return;
@@ -233,12 +230,12 @@ public class MainActivity extends AppCompatActivity
         @Override
         public void onServiceConnected(ComponentName name, IBinder serviceBinder) {
             RTMService.Binder binder = (RTMService.Binder) serviceBinder;
-            service = binder.getService();
+            rtmService = binder.getService();
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            service = null;
+            rtmService = null;
         }
     };
 

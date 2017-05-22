@@ -20,6 +20,7 @@ public class NotificationsFragment extends Fragment {
     private Preferences preferences;
     private EditText topicEditText;
     private TextView tokenTextView;
+    private TextView userIdTextView;
 
     public NotificationsFragment() {
         // Required empty public constructor
@@ -44,6 +45,7 @@ public class NotificationsFragment extends Fragment {
 
         topicEditText = (EditText)view.findViewById(R.id.topic);
         tokenTextView = (TextView) view.findViewById(R.id.token);
+        userIdTextView = (TextView) view.findViewById(R.id.userId);
 
         view.findViewById(R.id.suscribe).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,6 +63,9 @@ public class NotificationsFragment extends Fragment {
                 mListener.showToast("Unsubscribed from " + topic);
             }
         });
+
+        String userId = preferences.getUserId();
+        userIdTextView.setText(userId);
 
         String token = FirebaseInstanceId.getInstance().getToken();
         tokenTextView.setText(token);

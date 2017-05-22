@@ -19,8 +19,11 @@ import java.util.concurrent.Executors;
 import ar.edu.utn.frba.myapplication.BuildConfig;
 import ar.edu.utn.frba.myapplication.R;
 import ar.edu.utn.frba.myapplication.api.Callback;
+import ar.edu.utn.frba.myapplication.api.responses.IdentityResponse;
 import ar.edu.utn.frba.myapplication.api.SlackApi;
 import ar.edu.utn.frba.myapplication.api.responses.OAuthAccessResponse;
+import ar.edu.utn.frba.myapplication.firebase.MyFirebaseInstanceIDService;
+import ar.edu.utn.frba.myapplication.firebase.MyFirebaseTokenService;
 import ar.edu.utn.frba.myapplication.storage.Preferences;
 
 public class OAuthActivity extends AppCompatActivity {
@@ -117,7 +120,26 @@ public class OAuthActivity extends AppCompatActivity {
             @Override
             public void onSuccess(OAuthAccessResponse response) {
                 if (response.isOk()) {
-                    preferences.setAccessToken(response.getAccessToken());
+                    String accessToken = response.getAccessToken();
+                    preferences.setAccessToken(accessToken);
+
+                    executor.execute(SlackApi.identity(accessToken, new Callback<IdentityResponse>() {
+                        @Override
+                        public void onSuccess(IdentityResponse response) {
+                            if(response != null && response.user != null){
+                                preferences.setUserId(response.user.id);
+
+                                MyFirebaseTokenService myFirebaseTokenService = new MyFirebaseTokenService();
+                                myFirebaseTokenService.sendRegistrationToServer();
+                            }
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            //TODO Handle this better
+                            finish();
+                        }
+                    }));
                 }
                 finish();
             }

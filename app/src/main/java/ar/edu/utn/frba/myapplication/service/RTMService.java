@@ -29,6 +29,7 @@ import ar.edu.utn.frba.myapplication.api.responses.RtmStartResponse;
 import ar.edu.utn.frba.myapplication.api.responses.event.Event;
 import ar.edu.utn.frba.myapplication.api.responses.event.MessageEvent;
 import ar.edu.utn.frba.myapplication.api.responses.event.ResponseEvent;
+import ar.edu.utn.frba.myapplication.firebase.MyFirebaseTokenService;
 import ar.edu.utn.frba.myapplication.session.Session;
 import ar.edu.utn.frba.myapplication.session.SessionImpl;
 import ar.edu.utn.frba.myapplication.storage.Preferences;
@@ -225,6 +226,9 @@ public class RTMService extends Service {
     }
 
     public void logout() {
+        MyFirebaseTokenService myFirebaseTokenService = new MyFirebaseTokenService();
+        myFirebaseTokenService.unregistrateFromServer();
+
         String currentAccessToken = preferences.getAccessToken();
         preferences.setAccessToken(null);
         session = null;

@@ -32,4 +32,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Cargando..."/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fab_margin"
+        android:text="User ID"/>
+    <TextView
+        android:id="@+id/userId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Sesión no iniciada"/>
 </LinearLayout>

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ar.edu.utn.frba.myapplication.service;
+package ar.edu.utn.frba.myapplication.firebase;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
@@ -24,10 +24,7 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
     public void onTokenRefresh() {
         String refreshedToken = FirebaseInstanceId.getInstance().getToken();
 
-        sendRegistrationToServer(refreshedToken);
-    }
-
-    private void sendRegistrationToServer(String token) {
-        // TODO: Implement this method to send token to your app server.
+        MyFirebaseTokenService myFirebaseTokenService = new MyFirebaseTokenService();
+        myFirebaseTokenService.sendRegistrationToServer(refreshedToken);
     }
 }

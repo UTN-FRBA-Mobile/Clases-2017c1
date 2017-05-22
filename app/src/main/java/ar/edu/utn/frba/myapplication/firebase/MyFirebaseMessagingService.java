@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ar.edu.utn.frba.myapplication.service;
+package ar.edu.utn.frba.myapplication.firebase;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -34,6 +34,7 @@ import com.google.firebase.messaging.RemoteMessage;
 
 import ar.edu.utn.frba.myapplication.MainActivity;
 import ar.edu.utn.frba.myapplication.R;
+import ar.edu.utn.frba.myapplication.service.MyJobService;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 

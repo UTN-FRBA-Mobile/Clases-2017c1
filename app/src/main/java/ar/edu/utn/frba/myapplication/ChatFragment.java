@@ -159,7 +159,7 @@ public class ChatFragment extends Fragment {
     }
 
     void loadHistory() {
-        RTMService service = mListener != null ? mListener.getService() : null;
+        RTMService service = mListener != null ? mListener.getRtmService() : null;
         if (service != null) {
             progressBar.setVisibility(View.VISIBLE);
             service.retrieveChatHistory(chat, new Callback<ChatHistoryResponse>() {
@@ -233,7 +233,7 @@ public class ChatFragment extends Fragment {
     }
 
     private User findUser(String userId) {
-        RTMService service = mListener.getService();
+        RTMService service = mListener.getRtmService();
         Session session = service != null ? service.getSession() : null;
         return session != null ? session.findUser(userId) : null;
     }
@@ -262,7 +262,7 @@ public class ChatFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        RTMService getService();
+        RTMService getRtmService();
         void sendMessage(Chat chat, String message);
     }
 

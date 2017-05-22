@@ -51,17 +51,18 @@
         </provider>
 
         <service
-            android:name=".service.MyFirebaseMessagingService">
+            android:name=".firebase.MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
         </service>
         <service
-            android:name=".service.MyFirebaseInstanceIDService">
+            android:name=".firebase.MyFirebaseInstanceIDService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
             </intent-filter>
         </service>
+        <service android:name=".firebase.MyFirebaseTokenService"></service>
         <service android:name=".service.MyJobService"
             android:exported="false">
             <intent-filter>
