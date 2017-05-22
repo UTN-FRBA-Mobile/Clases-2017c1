@@ -27,6 +27,7 @@ android {
     }
 
     productFlavors {
+        base {}
         redclient {
             applicationIdSuffix ".redclient"
         }

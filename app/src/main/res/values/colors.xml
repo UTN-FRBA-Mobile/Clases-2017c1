@@ -12,5 +12,5 @@
     <color name="barButtonColorDisabled">#80ffffff</color>
     <color name="pendingMessage">#80000000</color>
 
-    <color name="background">#2265a0</color>
+    <color name="background">#aaaaaa</color>
 </resources>
