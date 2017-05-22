@@ -84,6 +84,15 @@ public class MainFragment extends Fragment {
                 mListener.hello();
             }
         });
+
+        View premiumButton = view.findViewById(R.id.premiumButton);
+        premiumButton.setVisibility(getResources().getBoolean(R.bool.is_premium)?View.VISIBLE:View.GONE);
+        premiumButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.navegar(PremiumFragment.newInstance());
+            }
+        });
     }
 
     @Override
