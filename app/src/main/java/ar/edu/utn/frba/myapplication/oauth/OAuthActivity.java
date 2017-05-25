@@ -2,6 +2,7 @@ package ar.edu.utn.frba.myapplication.oauth;
 
 import android.annotation.TargetApi;
 import android.graphics.Bitmap;
+import android.net.ParseException;
 import android.net.Uri;
 import android.os.Build;
 import android.support.v4.widget.ContentLoadingProgressBar;
@@ -13,6 +14,9 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.google.gson.Gson;
+
+import java.util.UUID;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -22,8 +26,6 @@ import ar.edu.utn.frba.myapplication.api.Callback;
 import ar.edu.utn.frba.myapplication.api.responses.IdentityResponse;
 import ar.edu.utn.frba.myapplication.api.SlackApi;
 import ar.edu.utn.frba.myapplication.api.responses.OAuthAccessResponse;
-import ar.edu.utn.frba.myapplication.firebase.MyFirebaseInstanceIDService;
-import ar.edu.utn.frba.myapplication.firebase.MyFirebaseTokenService;
 import ar.edu.utn.frba.myapplication.storage.Preferences;
 
 public class OAuthActivity extends AppCompatActivity {
@@ -75,6 +77,8 @@ public class OAuthActivity extends AppCompatActivity {
     }
 
     void loadLoginUrl() {
+        //TODO: No pude combinar el scope para ser client y además poder pedir la identity del usuario
+        //String url = SlackApi.getOAuthURL(BuildConfig.SLACK_CLIENT_ID, "identify,read,client", REDIRECT_URI.toString());
         String url = SlackApi.getOAuthURL(BuildConfig.SLACK_CLIENT_ID, "client", REDIRECT_URI.toString());
         webView.loadUrl(url);
     }
@@ -123,23 +127,39 @@ public class OAuthActivity extends AppCompatActivity {
                     String accessToken = response.getAccessToken();
                     preferences.setAccessToken(accessToken);
 
-                    executor.execute(SlackApi.identity(accessToken, new Callback<IdentityResponse>() {
-                        @Override
-                        public void onSuccess(IdentityResponse response) {
-                            if(response != null && response.user != null){
-                                preferences.setUserId(response.user.id);
+                    //TODO Genero un UserId random porque no pude pedir la identity del usuario de Slack por tema de permisos (ver método loadLoginUrl)
+                    preferences.setUserId(UUID.randomUUID().toString());
+                    String firebaseToken = preferences.getFirebaseToken();
+                    //TODO: Send FirebaseToken with UserId To Server
 
-                                MyFirebaseTokenService myFirebaseTokenService = new MyFirebaseTokenService();
-                                myFirebaseTokenService.sendRegistrationToServer();
-                            }
-                        }
-
-                        @Override
-                        public void onError(Exception e) {
-                            //TODO Handle this better
-                            finish();
-                        }
-                    }));
+//                    executor.execute(SlackApi.identity(accessToken, new Callback<IdentityResponse>() {
+//                        @Override
+//                        public void onSuccess(IdentityResponse response) {
+//                            Gson gson = new Gson();
+//                            preferences.setUserId(gson.toJson(response));
+//
+////                            if(response == null){
+////                                preferences.setUserId("No response");
+////                            }
+////                            if(response.user == null){
+////                                preferences.setUserId("No user");
+////                            }
+////
+////                            if(response != null && response.user != null){
+////                                preferences.setUserId(response.user.id);
+////
+////                                String firebaseToken = preferences.getFirebaseToken();
+////                                //Send FirebaseToken To Server
+////                            }
+//                        }
+//
+//                        @Override
+//                        public void onError(Exception e) {
+//                            preferences.setUserId("Error");
+//                            //TODO Handle this better
+//                            finish();
+//                        }
+//                    }));
                 }
                 finish();
             }

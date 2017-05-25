@@ -29,7 +29,6 @@ import ar.edu.utn.frba.myapplication.api.responses.RtmStartResponse;
 import ar.edu.utn.frba.myapplication.api.responses.event.Event;
 import ar.edu.utn.frba.myapplication.api.responses.event.MessageEvent;
 import ar.edu.utn.frba.myapplication.api.responses.event.ResponseEvent;
-import ar.edu.utn.frba.myapplication.firebase.MyFirebaseTokenService;
 import ar.edu.utn.frba.myapplication.session.Session;
 import ar.edu.utn.frba.myapplication.session.SessionImpl;
 import ar.edu.utn.frba.myapplication.storage.Preferences;
@@ -226,11 +225,10 @@ public class RTMService extends Service {
     }
 
     public void logout() {
-        MyFirebaseTokenService myFirebaseTokenService = new MyFirebaseTokenService();
-        myFirebaseTokenService.unregistrateFromServer();
-
         String currentAccessToken = preferences.getAccessToken();
+        String currentUserId = preferences.getAccessToken();
         preferences.setAccessToken(null);
+        preferences.setUserId(null);
         session = null;
         broadcastSessionChanged();
         disconnect(SlackApi.authRevoke(currentAccessToken, new Callback<AuthRevokeResponse>() {
@@ -242,6 +240,9 @@ public class RTMService extends Service {
             public void onError(Exception e) {
             }
         }));
+
+        String firebaseToken = preferences.getFirebaseToken();
+        //Desregistrar FirebaseToken de UserId
     }
 
     private void broadcastSessionChanged() {

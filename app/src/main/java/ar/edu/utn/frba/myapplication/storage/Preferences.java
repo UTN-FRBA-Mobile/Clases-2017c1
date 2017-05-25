@@ -2,6 +2,7 @@ package ar.edu.utn.frba.myapplication.storage;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 /**
  * Created by emanuel on 17/4/17.

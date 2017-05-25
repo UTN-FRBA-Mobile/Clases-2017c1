@@ -16,15 +16,27 @@
 
 package ar.edu.utn.frba.myapplication.firebase;
 
+import android.text.BoringLayout;
+
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
+
+import ar.edu.utn.frba.myapplication.storage.Preferences;
 
 public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
     @Override
     public void onTokenRefresh() {
-        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+        String firebaseToken = FirebaseInstanceId.getInstance().getToken();
 
-        MyFirebaseTokenService myFirebaseTokenService = new MyFirebaseTokenService();
-        myFirebaseTokenService.sendRegistrationToServer(refreshedToken);
+        Preferences preferences = Preferences.get(this);
+        String userId = preferences.getUserId();
+        Boolean userIsLoggedIn = userId != null;
+
+        if(userIsLoggedIn){
+            //Send to server
+        } else {
+            //Saves the Firebase token
+            preferences.setFirebaseToken(firebaseToken);
+        }
     }
 }
