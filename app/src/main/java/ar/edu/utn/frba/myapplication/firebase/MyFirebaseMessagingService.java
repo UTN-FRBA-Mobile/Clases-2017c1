@@ -32,6 +32,8 @@ import com.firebase.jobdispatcher.Job;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.util.Map;
+
 import ar.edu.utn.frba.myapplication.MainActivity;
 import ar.edu.utn.frba.myapplication.R;
 import ar.edu.utn.frba.myapplication.service.MyJobService;
@@ -41,12 +43,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         if (remoteMessage.getData().size() > 0) {
-            Boolean longRunningTask = Boolean.parseBoolean(remoteMessage.getData().get("isLongRunningTask"));
+            Boolean isLongRunningTask = this.isLongRunningTask(remoteMessage.getData());
 
-            if (longRunningTask) {
-                scheduleJob(remoteMessage.getData().get("messageToShow"));
+            if (isLongRunningTask) {
+                scheduleJob(remoteMessage.getData());
             } else {
-                handleNow(Integer.parseInt(remoteMessage.getData().get("amountOfSecondsToWait")));
+                handleNow(remoteMessage.getData());
             }
         }
 
@@ -55,11 +57,17 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
     }
 
-    private void scheduleJob(String messageToShow) {
+    private Boolean isLongRunningTask(Map<String, String> data) {
+        //Algoritmo que decidiría si es una tarea larga o no la que hay que hacer
+        return false;
+    }
+
+    private void scheduleJob(Map<String, String> data) {
         FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(new GooglePlayDriver(this));
 
         Bundle extras = new Bundle();
-        extras.putString("messageToShow", messageToShow);
+        //Completa los extras con la información contenida en el mensaje
+        extras.putString("data", data.get("algunDato"));
 
         Job myJob = dispatcher.newJobBuilder()
                 .setService(MyJobService.class)
@@ -70,8 +78,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         dispatcher.schedule(myJob);
     }
 
-    private void handleNow(int amountOfMinutesToWait) {
-        //TODO
+    private void handleNow(Map<String, String> data) {
+        //Realiza alguna gestión con la información contenida en el mensaje
     }
 
     private void sendNotification(String messageBody) {
