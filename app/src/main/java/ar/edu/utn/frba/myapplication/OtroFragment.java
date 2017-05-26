@@ -18,11 +18,8 @@ import android.widget.TextView;
  * create an instance of this fragment.
  */
 public class OtroFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
 
     private RecyclerView recyclerView;
@@ -38,7 +35,6 @@ public class OtroFragment extends Fragment {
      * @param texto Parameter 1.
      * @return A new instance of fragment OtroFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static OtroFragment newInstance(String texto) {
         OtroFragment fragment = new OtroFragment();
         Bundle args = new Bundle();

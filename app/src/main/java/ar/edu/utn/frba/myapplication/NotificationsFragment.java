@@ -9,11 +9,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import ar.edu.utn.frba.myapplication.api.PushServerApi;
+import ar.edu.utn.frba.myapplication.api.requests.UserPushRegistration;
+import ar.edu.utn.frba.myapplication.api.responses.Post;
+import ar.edu.utn.frba.myapplication.oauth.OAuthActivity;
 import ar.edu.utn.frba.myapplication.storage.Preferences;
+import ar.edu.utn.frba.myapplication.util.Util;
+import retrofit2.Call;
+import retrofit2.Response;
 
 public class NotificationsFragment extends Fragment {
     private MainFragment.OnFragmentInteractionListener mListener;

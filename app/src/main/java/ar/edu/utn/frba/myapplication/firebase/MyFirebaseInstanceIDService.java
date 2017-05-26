@@ -17,11 +17,22 @@
 package ar.edu.utn.frba.myapplication.firebase;
 
 import android.text.BoringLayout;
+import android.widget.Toast;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
 
+import ar.edu.utn.frba.myapplication.R;
+import ar.edu.utn.frba.myapplication.api.ImdbApi;
+import ar.edu.utn.frba.myapplication.api.PushServerApi;
+import ar.edu.utn.frba.myapplication.api.requests.UserPushRegistration;
+import ar.edu.utn.frba.myapplication.api.responses.Post;
+import ar.edu.utn.frba.myapplication.model.MovieListResponse;
 import ar.edu.utn.frba.myapplication.storage.Preferences;
+import ar.edu.utn.frba.myapplication.util.Util;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
     @Override
@@ -33,7 +44,21 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
         Boolean userIsLoggedIn = userId != null;
 
         if(userIsLoggedIn){
-            //Send to server
+            PushServerApi mApiService = Util.createPushServerNetworkClient();
+            Call<Post> response = mApiService.registerUser(new UserPushRegistration(userId, firebaseToken));
+            response.enqueue(new Callback<Post>() {
+                @Override
+                public void onResponse(Call<Post> call, Response<Post> response) {
+                    if(!response.isSuccessful()){
+                        //TODO
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Post> call, Throwable t) {
+                    //TODO
+                }
+            });
         } else {
             //Saves the Firebase token
             preferences.setFirebaseToken(firebaseToken);

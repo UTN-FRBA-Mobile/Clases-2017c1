@@ -13,6 +13,7 @@ import android.webkit.CookieSyncManager;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -23,10 +24,16 @@ import java.util.concurrent.Executors;
 import ar.edu.utn.frba.myapplication.BuildConfig;
 import ar.edu.utn.frba.myapplication.R;
 import ar.edu.utn.frba.myapplication.api.Callback;
+import ar.edu.utn.frba.myapplication.api.PushServerApi;
+import ar.edu.utn.frba.myapplication.api.requests.UserPushRegistration;
 import ar.edu.utn.frba.myapplication.api.responses.IdentityResponse;
 import ar.edu.utn.frba.myapplication.api.SlackApi;
 import ar.edu.utn.frba.myapplication.api.responses.OAuthAccessResponse;
+import ar.edu.utn.frba.myapplication.api.responses.Post;
 import ar.edu.utn.frba.myapplication.storage.Preferences;
+import ar.edu.utn.frba.myapplication.util.Util;
+import retrofit2.Call;
+import retrofit2.Response;
 
 public class OAuthActivity extends AppCompatActivity {
 
@@ -128,9 +135,27 @@ public class OAuthActivity extends AppCompatActivity {
                     preferences.setAccessToken(accessToken);
 
                     //TODO Genero un UserId random porque no pude pedir la identity del usuario de Slack por tema de permisos (ver método loadLoginUrl)
-                    preferences.setUserId(UUID.randomUUID().toString());
+                    String userId = UUID.randomUUID().toString();
+                    preferences.setUserId(userId);
+
                     String firebaseToken = preferences.getFirebaseToken();
-                    //TODO: Send FirebaseToken with UserId To Server
+                    PushServerApi mApiService = Util.createPushServerNetworkClient();
+                    Call<Post> registrationResponse = mApiService.registerUser(new UserPushRegistration(userId, firebaseToken));
+                    registrationResponse.enqueue(new retrofit2.Callback<Post>() {
+                        @Override
+                        public void onResponse(Call<Post> call, Response<Post> response) {
+                            if(!response.isSuccessful()){
+                                Toast.makeText(OAuthActivity.this, "TODO OK", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(OAuthActivity.this, "No success", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Post> call, Throwable t) {
+                            Toast.makeText(OAuthActivity.this, R.string.connection_error, Toast.LENGTH_SHORT).show();
+                        }
+                    });
 
 //                    executor.execute(SlackApi.identity(accessToken, new Callback<IdentityResponse>() {
 //                        @Override

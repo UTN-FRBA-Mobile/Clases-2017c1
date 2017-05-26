@@ -20,11 +20,15 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import ar.edu.utn.frba.myapplication.api.Callback;
+import ar.edu.utn.frba.myapplication.api.PushServerApi;
 import ar.edu.utn.frba.myapplication.api.ResponseParser;
 import ar.edu.utn.frba.myapplication.api.SlackApi;
+import ar.edu.utn.frba.myapplication.api.requests.UserPushDesregistration;
+import ar.edu.utn.frba.myapplication.api.requests.UserPushRegistration;
 import ar.edu.utn.frba.myapplication.api.responses.AuthRevokeResponse;
 import ar.edu.utn.frba.myapplication.api.responses.Chat;
 import ar.edu.utn.frba.myapplication.api.responses.ChatHistoryResponse;
+import ar.edu.utn.frba.myapplication.api.responses.Post;
 import ar.edu.utn.frba.myapplication.api.responses.RtmStartResponse;
 import ar.edu.utn.frba.myapplication.api.responses.event.Event;
 import ar.edu.utn.frba.myapplication.api.responses.event.MessageEvent;
@@ -32,8 +36,11 @@ import ar.edu.utn.frba.myapplication.api.responses.event.ResponseEvent;
 import ar.edu.utn.frba.myapplication.session.Session;
 import ar.edu.utn.frba.myapplication.session.SessionImpl;
 import ar.edu.utn.frba.myapplication.storage.Preferences;
+import ar.edu.utn.frba.myapplication.util.Util;
 import okio.Buffer;
 import okio.BufferedSource;
+import retrofit2.Call;
+import retrofit2.Response;
 
 /**
  * Created by emanuel on 25/9/16.
@@ -241,8 +248,21 @@ public class RTMService extends Service {
             }
         }));
 
-        String firebaseToken = preferences.getFirebaseToken();
-        //Desregistrar FirebaseToken de UserId
+        PushServerApi mApiService = Util.createPushServerNetworkClient();
+        Call<Post> response = mApiService.desregisterUser(new UserPushDesregistration(currentUserId));
+        response.enqueue(new retrofit2.Callback<Post>() {
+            @Override
+            public void onResponse(Call<Post> call, Response<Post> response) {
+                if(!response.isSuccessful()){
+                    //TODO
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Post> call, Throwable t) {
+                //TODO
+            }
+        });
     }
 
     private void broadcastSessionChanged() {
