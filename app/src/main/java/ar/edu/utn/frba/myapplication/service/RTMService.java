@@ -65,6 +65,7 @@ public class RTMService extends Service {
     private int lastId = 1;
     private SessionImpl session;
     private SparseArray<Event> pendingEvents = new SparseArray<>();
+    private PushServerApi mApiService = Util.createPushServerNetworkClient();
 
     @Nullable
     @Override
@@ -248,14 +249,11 @@ public class RTMService extends Service {
             }
         }));
 
-        PushServerApi mApiService = Util.createPushServerNetworkClient();
         Call<Post> response = mApiService.desregisterUser(new UserPushDesregistration(currentUserId));
         response.enqueue(new retrofit2.Callback<Post>() {
             @Override
             public void onResponse(Call<Post> call, Response<Post> response) {
-                if(!response.isSuccessful()){
-                    //TODO
-                }
+                //TODO
             }
 
             @Override

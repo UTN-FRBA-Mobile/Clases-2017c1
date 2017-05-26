@@ -43,6 +43,7 @@ public class OAuthActivity extends AppCompatActivity {
     private ContentLoadingProgressBar progressBar;
     private Executor executor = Executors.newSingleThreadExecutor();
     private Preferences preferences = Preferences.get(this);
+    private PushServerApi mApiService = Util.createPushServerNetworkClient();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,19 +139,16 @@ public class OAuthActivity extends AppCompatActivity {
                     String userId = UUID.randomUUID().toString();
                     preferences.setUserId(userId);
 
-                    String firebaseToken = preferences.getFirebaseToken();
-                    PushServerApi mApiService = Util.createPushServerNetworkClient();
-                    Call<Post> registrationResponse = mApiService.registerUser(new UserPushRegistration(userId, firebaseToken));
+                    Call<Post> registrationResponse = mApiService.registerUser(new UserPushRegistration(userId, preferences.getFirebaseToken()));
                     registrationResponse.enqueue(new retrofit2.Callback<Post>() {
                         @Override
                         public void onResponse(Call<Post> call, Response<Post> response) {
                             if(!response.isSuccessful()){
-                                Toast.makeText(OAuthActivity.this, "TODO OK", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(OAuthActivity.this, "User Registered in Push Server", Toast.LENGTH_SHORT).show();
                             } else {
-                                Toast.makeText(OAuthActivity.this, "No success", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(OAuthActivity.this, "Error while registering User in Push Server", Toast.LENGTH_SHORT).show();
                             }
                         }
-
                         @Override
                         public void onFailure(Call<Post> call, Throwable t) {
                             Toast.makeText(OAuthActivity.this, R.string.connection_error, Toast.LENGTH_SHORT).show();

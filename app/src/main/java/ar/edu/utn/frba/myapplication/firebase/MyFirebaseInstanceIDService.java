@@ -35,23 +35,23 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
+    private PushServerApi mApiService = Util.createPushServerNetworkClient();
+    Preferences preferences = Preferences.get(this);
+
     @Override
     public void onTokenRefresh() {
         String firebaseToken = FirebaseInstanceId.getInstance().getToken();
+        preferences.setFirebaseToken(firebaseToken);
 
-        Preferences preferences = Preferences.get(this);
         String userId = preferences.getUserId();
         Boolean userIsLoggedIn = userId != null;
 
         if(userIsLoggedIn){
-            PushServerApi mApiService = Util.createPushServerNetworkClient();
             Call<Post> response = mApiService.registerUser(new UserPushRegistration(userId, firebaseToken));
             response.enqueue(new Callback<Post>() {
                 @Override
                 public void onResponse(Call<Post> call, Response<Post> response) {
-                    if(!response.isSuccessful()){
-                        //TODO
-                    }
+                    //TODO
                 }
 
                 @Override
@@ -59,9 +59,6 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
                     //TODO
                 }
             });
-        } else {
-            //Saves the Firebase token
-            preferences.setFirebaseToken(firebaseToken);
         }
     }
 }
