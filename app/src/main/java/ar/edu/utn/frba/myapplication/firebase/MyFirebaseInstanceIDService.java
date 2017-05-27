@@ -47,15 +47,15 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
         Boolean userIsLoggedIn = userId != null;
 
         if(userIsLoggedIn){
-            Call<Post> response = mApiService.registerUser(new UserPushRegistration(userId, firebaseToken));
-            response.enqueue(new Callback<Post>() {
+            Call<Void> response = mApiService.registerUser(new UserPushRegistration(userId, firebaseToken));
+            response.enqueue(new Callback<Void>() {
                 @Override
-                public void onResponse(Call<Post> call, Response<Post> response) {
+                public void onResponse(Call<Void> call, Response<Void> response) {
                     //TODO
                 }
 
                 @Override
-                public void onFailure(Call<Post> call, Throwable t) {
+                public void onFailure(Call<Void> call, Throwable t) {
                     //TODO
                 }
             });

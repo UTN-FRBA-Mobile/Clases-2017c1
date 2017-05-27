@@ -9,8 +9,8 @@ import retrofit2.http.POST;
 
 public interface PushServerApi {
     @POST("/subscribe")
-    Call<Post> registerUser(@Body UserPushRegistration data);
+    Call<Void> registerUser(@Body UserPushRegistration data);
 
     @POST("/unsubscribe")
-    Call<Post> desregisterUser(@Body UserPushDesregistration userPushDesregistration);
+    Call<Void> desregisterUser(@Body UserPushDesregistration userPushDesregistration);
 }

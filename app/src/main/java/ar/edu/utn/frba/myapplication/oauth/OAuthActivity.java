@@ -139,19 +139,19 @@ public class OAuthActivity extends AppCompatActivity {
                     String userId = UUID.randomUUID().toString();
                     preferences.setUserId(userId);
 
-                    Call<Post> registrationResponse = mApiService.registerUser(new UserPushRegistration(userId, preferences.getFirebaseToken()));
-                    registrationResponse.enqueue(new retrofit2.Callback<Post>() {
+                    Call<Void> registrationResponse = mApiService.registerUser(new UserPushRegistration(userId, preferences.getFirebaseToken()));
+                    registrationResponse.enqueue(new retrofit2.Callback<Void>() {
                         @Override
-                        public void onResponse(Call<Post> call, Response<Post> response) {
-                            if(!response.isSuccessful()){
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+                            if(response.isSuccessful()){
                                 Toast.makeText(OAuthActivity.this, "User Registered in Push Server", Toast.LENGTH_SHORT).show();
                             } else {
                                 Toast.makeText(OAuthActivity.this, "Error while registering User in Push Server", Toast.LENGTH_SHORT).show();
                             }
                         }
                         @Override
-                        public void onFailure(Call<Post> call, Throwable t) {
-                            Toast.makeText(OAuthActivity.this, R.string.connection_error, Toast.LENGTH_SHORT).show();
+                        public void onFailure(Call<Void> call, Throwable t) {
+                            Toast.makeText(OAuthActivity.this, R.string.connection_error + t.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
 

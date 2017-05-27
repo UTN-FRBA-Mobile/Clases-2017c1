@@ -10,7 +10,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Util {
     public final static String mImdbBaseURL = "http://api.themoviedb.org/3/";
-    public final static String mPushServerBaseURL = "http://10.0.2.2:8000/";
+    public final static String mPushServerBaseURL = "http://10.0.2.2:8000/"; //10.0.2.2 localhost desde el emulador
 
     public static ImdbApi createImdbNetworkClient(){
         Retrofit mRetrofit = new Retrofit.Builder()

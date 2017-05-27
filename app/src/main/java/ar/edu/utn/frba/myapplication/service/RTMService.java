@@ -7,6 +7,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.SparseArray;
+import android.widget.Toast;
 
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.internal.ws.WebSocket;
@@ -234,7 +235,7 @@ public class RTMService extends Service {
 
     public void logout() {
         String currentAccessToken = preferences.getAccessToken();
-        String currentUserId = preferences.getAccessToken();
+        String currentUserId = preferences.getUserId();
         preferences.setAccessToken(null);
         preferences.setUserId(null);
         session = null;
@@ -249,16 +250,20 @@ public class RTMService extends Service {
             }
         }));
 
-        Call<Post> response = mApiService.desregisterUser(new UserPushDesregistration(currentUserId));
-        response.enqueue(new retrofit2.Callback<Post>() {
+        Call<Void> response = mApiService.desregisterUser(new UserPushDesregistration(currentUserId));
+        response.enqueue(new retrofit2.Callback<Void>() {
             @Override
-            public void onResponse(Call<Post> call, Response<Post> response) {
-                //TODO
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if(response.isSuccessful()){
+                    Toast.makeText(RTMService.this, "User unregistered from Push server", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(RTMService.this, "Error while unregistering User from Push server", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
-            public void onFailure(Call<Post> call, Throwable t) {
-                //TODO
+            public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(RTMService.this, "Connection error", Toast.LENGTH_SHORT).show();
             }
         });
     }
