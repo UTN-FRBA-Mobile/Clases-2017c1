@@ -44,4 +44,11 @@
     <string name="placeholder_loading">Cargando</string>
     <string name="connection_error">Connection error</string>
     <string name="placeholder_release_date">Estreno:  %1$s</string>
+    <string name="insert_topic">Ingresar Topic</string>
+    <string name="subscribe">Suscribirse</string>
+    <string name="unsubscribe">Desubscribirse</string>
+    <string name="firebase_token_id">Firebase Token ID</string>
+    <string name="loading">Cargando...</string>
+    <string name="user_id">User ID</string>
+    <string name="sesion_not_initiated">Sesión no iniciada</string>
 </resources>

@@ -20,5 +20,6 @@
     <string name="hello">Hello</string>
     <string name="hello_toast">Hello how are you?</string>
     <string name="from_url">From Url</string>
+    <string name="Notifications">Notifications</string>
 
 </resources>

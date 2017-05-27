@@ -24,12 +24,10 @@ import ar.edu.utn.frba.myapplication.api.Callback;
 import ar.edu.utn.frba.myapplication.api.PushServerApi;
 import ar.edu.utn.frba.myapplication.api.ResponseParser;
 import ar.edu.utn.frba.myapplication.api.SlackApi;
-import ar.edu.utn.frba.myapplication.api.requests.UserPushDesregistration;
-import ar.edu.utn.frba.myapplication.api.requests.UserPushRegistration;
+import ar.edu.utn.frba.myapplication.api.requests.UserPushUnregistration;
 import ar.edu.utn.frba.myapplication.api.responses.AuthRevokeResponse;
 import ar.edu.utn.frba.myapplication.api.responses.Chat;
 import ar.edu.utn.frba.myapplication.api.responses.ChatHistoryResponse;
-import ar.edu.utn.frba.myapplication.api.responses.Post;
 import ar.edu.utn.frba.myapplication.api.responses.RtmStartResponse;
 import ar.edu.utn.frba.myapplication.api.responses.event.Event;
 import ar.edu.utn.frba.myapplication.api.responses.event.MessageEvent;
@@ -250,7 +248,7 @@ public class RTMService extends Service {
             }
         }));
 
-        Call<Void> response = mApiService.desregisterUser(new UserPushDesregistration(currentUserId));
+        Call<Void> response = mApiService.unregisterUser(new UserPushUnregistration(currentUserId));
         response.enqueue(new retrofit2.Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {

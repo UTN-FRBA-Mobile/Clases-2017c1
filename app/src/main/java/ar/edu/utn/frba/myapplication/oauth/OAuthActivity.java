@@ -2,20 +2,17 @@ package ar.edu.utn.frba.myapplication.oauth;
 
 import android.annotation.TargetApi;
 import android.graphics.Bitmap;
-import android.net.ParseException;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
-
-import com.google.gson.Gson;
 
 import java.util.UUID;
 import java.util.concurrent.Executor;
@@ -25,11 +22,9 @@ import ar.edu.utn.frba.myapplication.BuildConfig;
 import ar.edu.utn.frba.myapplication.R;
 import ar.edu.utn.frba.myapplication.api.Callback;
 import ar.edu.utn.frba.myapplication.api.PushServerApi;
-import ar.edu.utn.frba.myapplication.api.requests.UserPushRegistration;
-import ar.edu.utn.frba.myapplication.api.responses.IdentityResponse;
 import ar.edu.utn.frba.myapplication.api.SlackApi;
+import ar.edu.utn.frba.myapplication.api.requests.UserPushRegistration;
 import ar.edu.utn.frba.myapplication.api.responses.OAuthAccessResponse;
-import ar.edu.utn.frba.myapplication.api.responses.Post;
 import ar.edu.utn.frba.myapplication.storage.Preferences;
 import ar.edu.utn.frba.myapplication.util.Util;
 import retrofit2.Call;
@@ -160,26 +155,17 @@ public class OAuthActivity extends AppCompatActivity {
 //                        public void onSuccess(IdentityResponse response) {
 //                            Gson gson = new Gson();
 //                            preferences.setUserId(gson.toJson(response));
+
+//                            if(response != null && response.user != null){
+//                                preferences.setUserId(response.user.id);
 //
-////                            if(response == null){
-////                                preferences.setUserId("No response");
-////                            }
-////                            if(response.user == null){
-////                                preferences.setUserId("No user");
-////                            }
-////
-////                            if(response != null && response.user != null){
-////                                preferences.setUserId(response.user.id);
-////
-////                                String firebaseToken = preferences.getFirebaseToken();
-////                                //Send FirebaseToken To Server
-////                            }
+//                                String firebaseToken = preferences.getFirebaseToken();
+//                                //Send FirebaseToken To Server
+//                            }
 //                        }
 //
 //                        @Override
 //                        public void onError(Exception e) {
-//                            preferences.setUserId("Error");
-//                            //TODO Handle this better
 //                            finish();
 //                        }
 //                    }));

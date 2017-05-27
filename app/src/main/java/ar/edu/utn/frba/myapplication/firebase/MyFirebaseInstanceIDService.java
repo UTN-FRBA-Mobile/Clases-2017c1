@@ -28,6 +28,7 @@ import ar.edu.utn.frba.myapplication.api.PushServerApi;
 import ar.edu.utn.frba.myapplication.api.requests.UserPushRegistration;
 import ar.edu.utn.frba.myapplication.api.responses.Post;
 import ar.edu.utn.frba.myapplication.model.MovieListResponse;
+import ar.edu.utn.frba.myapplication.service.RTMService;
 import ar.edu.utn.frba.myapplication.storage.Preferences;
 import ar.edu.utn.frba.myapplication.util.Util;
 import retrofit2.Call;
@@ -51,12 +52,16 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
             response.enqueue(new Callback<Void>() {
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response) {
-                    //TODO
+                    if(response.isSuccessful()){
+                        Toast.makeText(MyFirebaseInstanceIDService.this, "User registered inPush server", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(MyFirebaseInstanceIDService.this, "Error while registering User in Push server", Toast.LENGTH_SHORT).show();
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<Void> call, Throwable t) {
-                    //TODO
+                    Toast.makeText(MyFirebaseInstanceIDService.this, "Connection error", Toast.LENGTH_SHORT).show();
                 }
             });
         }

@@ -1,9 +1,9 @@
 package ar.edu.utn.frba.myapplication.api.requests;
 
-public class UserPushDesregistration {
+public class UserPushUnregistration {
     public String user;
 
-    public UserPushDesregistration(String userId) {
+    public UserPushUnregistration(String userId) {
         this.user = userId;
     }
 }
