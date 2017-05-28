@@ -43,4 +43,15 @@
     <string name="placeholder_loading">Cargando</string>
     <string name="connection_error">Connection error</string>
     <string name="placeholder_release_date">Estreno:  %1$s</string>
+
+    <string name="appwidget_text">Probando</string>
+    <string name="configure">Configure</string>
+    <string name="add_widget">Add widget</string>
+
+    <string name="widget_0">Este es un widget</string>
+    <string name="widget_1">que se actualiza</string>
+    <string name="widget_2">al tocar el botón</string>
+    <string name="widget_3">acá cambió todo</string>
+    <string name="widget_4">y acá volvió a quedar</string>
+    <string name="widget_5">y acá se acabó.</string>
 </resources>
