@@ -19,8 +19,8 @@ public class NotificationsFragment extends Fragment {
     private MainFragment.OnFragmentInteractionListener mListener;
     private Preferences preferences;
     private EditText topicEditText;
-    private TextView tokenTextView;
-    private TextView userIdTextView;
+    private EditText tokenTextView;
+    private EditText userIdTextView;
 
     public NotificationsFragment() {
         // Required empty public constructor
@@ -44,8 +44,8 @@ public class NotificationsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         topicEditText = (EditText)view.findViewById(R.id.topic);
-        tokenTextView = (TextView) view.findViewById(R.id.token);
-        userIdTextView = (TextView) view.findViewById(R.id.userId);
+        tokenTextView = (EditText) view.findViewById(R.id.token);
+        userIdTextView = (EditText) view.findViewById(R.id.userId);
 
         view.findViewById(R.id.suscribe).setOnClickListener(new View.OnClickListener() {
             @Override

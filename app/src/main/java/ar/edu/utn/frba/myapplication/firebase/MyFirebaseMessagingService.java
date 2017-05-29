@@ -25,6 +25,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.NotificationCompat;
+import android.widget.Toast;
 
 import com.firebase.jobdispatcher.FirebaseJobDispatcher;
 import com.firebase.jobdispatcher.GooglePlayDriver;
@@ -80,6 +81,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private void handleNow(Map<String, String> data) {
         //Realiza alguna gestión con la información contenida en el mensaje
+        sendNotification("Mensaje de Datos");
     }
 
     private void sendNotification(String messageBody) {

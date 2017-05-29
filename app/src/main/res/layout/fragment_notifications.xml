@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/fab_margin"
         android:text="@string/firebase_token_id"/>
-    <TextView
+    <EditText
         android:id="@+id/token"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -38,7 +38,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/fab_margin"
         android:text="@string/user_id"/>
-    <TextView
+    <EditText
         android:id="@+id/userId"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
