@@ -5,10 +5,13 @@
     <!-- Requerido para acceder a Internet -->
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <uses-feature android:name="android.hardware.camera"
+    <uses-feature
+        android:name="android.hardware.camera"
         android:required="false" />
+
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="18" />
 
     <application
@@ -50,6 +53,25 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
+        <receiver android:name=".widget.HiAppWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/hi_app_widget_info" />
+        </receiver>
+
+        <activity android:name=".widget.HiAppWidgetConfigureActivity">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+
+        <service
+            android:name=".widget.WidgetService"
+            android:exported="false" />
         <service
             android:name=".firebase.MyFirebaseMessagingService">
             <intent-filter>
