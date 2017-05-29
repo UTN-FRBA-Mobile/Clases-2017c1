@@ -16,6 +16,7 @@ import ar.edu.utn.frba.myapplication.api.responses.ChatHistoryResponse;
 import ar.edu.utn.frba.myapplication.api.responses.IM;
 import ar.edu.utn.frba.myapplication.api.responses.OAuthAccessResponse;
 import ar.edu.utn.frba.myapplication.api.responses.RtmStartResponse;
+import ar.edu.utn.frba.myapplication.api.responses.IdentityResponse;
 
 /**
  * Created by emanuel on 10/4/17.
@@ -39,6 +40,12 @@ public class SlackApi {
         URL url = parseURL("oauth.access?client_id=" + cliendId + "&client_secret=" + clientSecret + "&code=" + code + "&redirect_uri=" + redirectUri.toString());
         return jsonRequest(url, callback, OAuthAccessResponse.class);
     }
+
+    public static Runnable identity(String token, final Callback<IdentityResponse> callback) {
+        URL url = parseURL("users.identity?token=" + token);
+        return jsonRequest(url, callback, IdentityResponse.class);
+    }
+
 
     public static Runnable rtmStart(String token, final Callback<RtmStartResponse> callback) {
         URL url = parseURL("rtm.start?token=" + token);

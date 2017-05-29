@@ -40,7 +40,6 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
-
     androidTestCompile('com.android.support.test.espresso:espresso-contrib:2.2.2') {
         exclude module: 'design'
         exclude module: 'support-v4'
@@ -53,7 +52,6 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp:2.2.0'
     compile 'com.google.code.gson:gson:2.7'
 
-
     compile 'com.jakewharton:butterknife:8.6.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.6.0'
 
@@ -61,8 +59,8 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-gson:2.0.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
 
-
-
+    compile 'com.google.firebase:firebase-messaging:10.2.6'
+    compile 'com.firebase:firebase-jobdispatcher:0.5.2'
     testCompile 'junit:junit:4.12'
     androidTestCompile 'com.android.support:recyclerview-v7:25.3.1'
     androidTestCompile 'com.android.support:support-annotations:25.3.1'
@@ -72,3 +70,5 @@ dependencies {
     androidTestCompile 'com.android.support.test:rules:0.5'
     androidTestCompile 'junit:junit:4.12'
 }
+
+apply plugin: 'com.google.gms.google-services'

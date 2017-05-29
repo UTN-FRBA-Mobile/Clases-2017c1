@@ -7,6 +7,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.SparseArray;
+import android.widget.Toast;
 
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.internal.ws.WebSocket;
@@ -20,8 +21,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import ar.edu.utn.frba.myapplication.api.Callback;
+import ar.edu.utn.frba.myapplication.api.PushServerApi;
 import ar.edu.utn.frba.myapplication.api.ResponseParser;
 import ar.edu.utn.frba.myapplication.api.SlackApi;
+import ar.edu.utn.frba.myapplication.api.requests.UserPushUnregistration;
 import ar.edu.utn.frba.myapplication.api.responses.AuthRevokeResponse;
 import ar.edu.utn.frba.myapplication.api.responses.Chat;
 import ar.edu.utn.frba.myapplication.api.responses.ChatHistoryResponse;
@@ -32,8 +35,11 @@ import ar.edu.utn.frba.myapplication.api.responses.event.ResponseEvent;
 import ar.edu.utn.frba.myapplication.session.Session;
 import ar.edu.utn.frba.myapplication.session.SessionImpl;
 import ar.edu.utn.frba.myapplication.storage.Preferences;
+import ar.edu.utn.frba.myapplication.util.Util;
 import okio.Buffer;
 import okio.BufferedSource;
+import retrofit2.Call;
+import retrofit2.Response;
 
 /**
  * Created by emanuel on 25/9/16.
@@ -58,6 +64,7 @@ public class RTMService extends Service {
     private int lastId = 1;
     private SessionImpl session;
     private SparseArray<Event> pendingEvents = new SparseArray<>();
+    private PushServerApi mApiService = Util.createPushServerNetworkClient();
 
     @Nullable
     @Override
@@ -226,7 +233,9 @@ public class RTMService extends Service {
 
     public void logout() {
         String currentAccessToken = preferences.getAccessToken();
+        String currentUserId = preferences.getUserId();
         preferences.setAccessToken(null);
+        preferences.setUserId(null);
         session = null;
         broadcastSessionChanged();
         disconnect(SlackApi.authRevoke(currentAccessToken, new Callback<AuthRevokeResponse>() {
@@ -238,6 +247,23 @@ public class RTMService extends Service {
             public void onError(Exception e) {
             }
         }));
+
+        Call<Void> response = mApiService.unregisterUser(new UserPushUnregistration(currentUserId));
+        response.enqueue(new retrofit2.Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if(response.isSuccessful()){
+                    Toast.makeText(RTMService.this, "User unregistered from Push server", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(RTMService.this, "Error while unregistering User from Push server", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(RTMService.this, "Connection error", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void broadcastSessionChanged() {

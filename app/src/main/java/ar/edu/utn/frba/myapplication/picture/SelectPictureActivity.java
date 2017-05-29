@@ -223,7 +223,7 @@ public class SelectPictureActivity extends AppCompatActivity {
             while (len != -1) {
                 output.write(buffer, 0, len);
                 len = input.read(buffer);
-            };
+            }
             output.close();
             input.close();
         } catch (Exception e) {
